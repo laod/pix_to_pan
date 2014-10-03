@@ -1,0 +1,93 @@
+
+grammar Pix
+
+  rule acl_top
+    'access-list' spaces name spaces  ('extended' spaces)? action spaces protocol:(protocol spaces)? src spaces dest
+  end
+
+  rule spaces
+    ' '+
+  end
+  
+  rule name
+    [a-zA-Z_]+
+  end
+  
+  rule action
+    'permit' / 'deny'
+  end
+  
+  rule protocol
+    'tcp' / 'udp' / 'icmp' / 'ip'
+  end
+  
+  rule src
+    addr sp:(spaces portspec)?
+  end
+  
+  rule dest
+    addr sp:(spaces portspec)?
+  end
+  
+  rule addr
+    'any' / host / net
+  end
+  
+  rule host
+    'host' spaces ip
+  end
+  
+  rule net
+    ip spaces mask
+  end
+  
+  rule ip
+    octet_dot 3..3 octet
+  end
+  
+  rule octet_dot
+    octet '.'
+  end
+  
+  rule octet
+    #0-255
+    [0-9]1..3
+  end
+  
+  rule mask
+    ip
+  end
+  
+  rule portspec
+    single_port / range
+  end
+
+  rule single_port
+    'eq' spaces port:(int_port / named_port)
+  end
+
+  rule int_port
+    [0-9]1..5
+  end
+
+  rule named_port
+    !'any' [a-zA-Z-]+
+  end
+  
+  rule range
+    'range' spaces bot spaces top
+  end
+  
+  rule bot
+    int_port / named_port
+  end
+  
+  rule top
+    int_port / named_port
+  end
+
+  rule rest
+    .*
+  end
+end
+
